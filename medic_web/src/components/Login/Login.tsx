@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
@@ -23,7 +23,7 @@ function Login() {
     setUsernameVisible(!usernameVisible);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     setLoading(true);
 
@@ -31,8 +31,7 @@ function Login() {
       setLoading(false);
       navigate("/home");
     }, 2000);
-  };
-
+};
   return (
     <div className="wrapper">
       <form onSubmit={handleSubmit}>
