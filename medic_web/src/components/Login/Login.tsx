@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import axios from "axios";
@@ -31,16 +31,16 @@ function Login() {
     setLoading(true);
   
     try {
-      
-      const response = await axios.post('https://medic-api.vercel.app/login', { username, password });
-  
+      const response = await axios.post('https://medic-api.vercel.app/login', 
+        { username, password },
+        { withCredentials: true } // Ensure credentials are sent with the request
+      );
     
       if (response.status === 200) {
         navigate("/home");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-     
         console.error('Login failed:', error.response?.data || error.message);
         alert('Login failed: ' + (error.response?.data || error.message));
       } else {
@@ -51,6 +51,7 @@ function Login() {
       setLoading(false);
     }
   };
+
   return (
     <div className="wrapper">
       <form onSubmit={handleSubmit}>
@@ -60,7 +61,7 @@ function Login() {
             placeholder="Username"
             type={usernameVisible ? "text" : "password"}
             value={username}
-            onChange={(e)=>setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <i className="bx bxs-user" onClick={toggleUsernameVisibility}></i>
         </div>
@@ -69,7 +70,7 @@ function Login() {
             type={passwordVisible ? "text" : "password"}
             placeholder="Password"
             value={password}
-            onChange={(e)=>setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <i
             className={passwordVisible ? "bx bxs-show" : "bx bxs-hide"}
