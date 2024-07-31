@@ -16,29 +16,25 @@ function Home() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const[token,setToken]=useState(localStorage.getItem('accessToken'));
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('https://medic-api.vercel.app/users', {
-          method: 'GET',
+        const response = await axios.get('https://medic-api.vercel.app/users', {
           headers: {
-            'Authorization': `${localStorage.getItem("accessToken")}`,
+            'Authorization': `${token}`,
             'Content-Type': 'application/json'
-          }
+          }, withCredentials: true 
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        localStorage.setItem("accessToken", [...response.headers][0][1]);
-        setUsers(data);
+        localStorage.setItem("accessToken", response.headers.authorization);
+        setToken(response.headers.authorization);
+        setUsers(response.data);
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
+        if (axios.isAxiosError(err) && err.response) {
+          setError(`HTTP error! Status: ${err.response.status}`);
         } else {
           setError('An error occurred');
         }
@@ -52,12 +48,14 @@ function Home() {
     try {
       const response = await axios.get(`https://medic-api.vercel.app/users/details/${user.id}`, {
         headers: {
-          'Authorization': `${localStorage.getItem("accessToken")}`
-        }
+          'Authorization': `${token}`
+        }, withCredentials: true 
       });
 
       if (response.status === 200) {
         localStorage.setItem("accessToken", response.headers.authorization);
+        setToken(response.headers.authorization)
+
 
         setSelectedUser(response.data);
       } else {
