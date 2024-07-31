@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import axios from "axios";
 
-function Login() {
+interface LoginProps {
+  setIsLoggedIn: (value: boolean) => void;
+}
+
+function Login({ setIsLoggedIn }: LoginProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [usernameVisible, setUsernameVisible] = useState(false);
-  const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -22,24 +25,24 @@ function Login() {
     setPasswordVisible(!passwordVisible);
   };
 
-  const toggleUsernameVisibility = () => {
-    setUsernameVisible(!usernameVisible);
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setLoading(true);
-  
+
     try {
       const response = await axios.post('https://medic-api.vercel.app/login', 
         { username, password },
-        { withCredentials: true } 
+        { withCredentials: true }
       );
-    
+
       if (response.status === 200) {
+        localStorage.setItem('isLoggedIn', "prijavljen");
+        setIsLoggedIn(true);
         navigate("/home");
       }
     } catch (error) {
+      localStorage.removeItem('isLoggedIn');
+      setIsLoggedIn(false);
       if (axios.isAxiosError(error)) {
         console.error('Login failed:', error.response?.data || error.message);
         alert('Login failed: ' + (error.response?.data || error.message));
@@ -59,11 +62,11 @@ function Login() {
         <div className="input-box">
           <input
             placeholder="Username"
-            type={usernameVisible ? "text" : "password"}
+            type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <i className="bx bxs-user" onClick={toggleUsernameVisibility}></i>
+          <i className="bx bxs-user"></i>
         </div>
         <div className="input-box">
           <input
