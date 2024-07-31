@@ -3,8 +3,7 @@ import axios from 'axios';
 import Modal from '../Modal/Modal';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
-import {jwtDecode} from 'jwt-decode';
+
 ;
 
 
