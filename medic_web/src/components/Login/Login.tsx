@@ -45,10 +45,10 @@ function Login({ setIsLoggedIn }: LoginProps) {
       setIsLoggedIn(false);
       if (axios.isAxiosError(error)) {
         console.error('Login failed:', error.response?.data || error.message);
-        alert('Login failed: ' + (error.response?.data || error.message));
+        //alert('Login failed: ' + (error.response?.data || error.message));
       } else {
         console.error('An unexpected error occurred:', error);
-        alert('An unexpected error occurred.');
+        //alert('An unexpected error occurred.');
       }
     } finally {
       setLoading(false);

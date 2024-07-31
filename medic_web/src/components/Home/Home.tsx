@@ -3,6 +3,10 @@ import axios from 'axios';
 import Modal from '../Modal/Modal';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import {jwtDecode} from 'jwt-decode';
+;
+
 
 interface User {
   id: number;
@@ -11,15 +15,22 @@ interface User {
   role: string;
   date_of_birth: string;
 }
+
+interface DecodedToken {
+  username: string;
+  role: string;
+  exp: number;
+  iat: number;
+}
+
 function Home() {
+  
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const navigate=useNavigate();
-
+  const navigate = useNavigate();
 
   useEffect(() => {
-    
     const fetchUsers = async () => {
       try {
         const response = await axios.get<User[]>('https://medic-api.vercel.app/users', { withCredentials: true });
@@ -34,8 +45,11 @@ function Home() {
     };
 
     fetchUsers();
-  }, []);
+    
 
+
+  }, []);
+  
   const handleUserClick = (user: User) => {
     setSelectedUser(user);
   };
@@ -44,13 +58,11 @@ function Home() {
     setSelectedUser(null);
   };
 
-  
-
   const handleLogout = async (): Promise<void> => {
     try {
       await axios.post('https://medic-api.vercel.app/logout', {}, { withCredentials: true });
       localStorage.removeItem('isLoggedIn');
-      navigate('/')
+      navigate('/');
     } catch (error) {
       console.error(error);
     }
@@ -60,15 +72,17 @@ function Home() {
     <div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button id='addButton'>Add</button>
-      <button id='logoutButton' onClick={()=>handleLogout()}>Logout</button>
-
+      <button id='logoutButton' onClick={() => handleLogout()}>Logout</button>
+      
+  
 
       <div className="container">
         {users.map(user => (
           <div className="card" key={user.id} onClick={() => handleUserClick(user)}>
-<div style={{ marginTop: '-20px', marginBottom:'15px' }}>
-  <strong>{user.name}</strong>
-</div>            <img src={`https://c0.wallpaperflare.com/preview/386/354/385/analysis-hospital-doctor-medical.jpg`} />
+            <div style={{ marginTop: '-20px', marginBottom: '15px' }}>
+              <strong>{user.name}</strong>
+            </div>
+            <img src={`https://c0.wallpaperflare.com/preview/386/354/385/analysis-hospital-doctor-medical.jpg`} />
             <div className="user-info">
               <strong>Username:</strong> {user.username}<br />
               <strong>Name:</strong> {user.name}
