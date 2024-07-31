@@ -46,8 +46,6 @@ function Home() {
 
       if (response.status === 200) {
         
-
-
         setSelectedUser(response.data);
       } else {
         setError('User not found');
