@@ -34,7 +34,6 @@ function Login({ setIsLoggedIn }: LoginProps) {
         { username, password }, 
       ); 
       if (response.status === 200) {
-        localStorage.setItem("accessToken", response.headers.authorization);
         localStorage.setItem('isLoggedIn', "prijavljen");
         setIsLoggedIn(true);
         navigate("/home");

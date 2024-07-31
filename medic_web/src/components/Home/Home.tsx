@@ -16,21 +16,15 @@ function Home() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const[token,setToken]=useState(localStorage.getItem('accessToken'));
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('https://medic-api.vercel.app/users', {
-          headers: {
-            'Authorization': `${token}`,
-            'Content-Type': 'application/json'
-          }, withCredentials: true 
+         
         });
 
-        localStorage.setItem("accessToken", response.headers.authorization);
-        setToken(response.headers.authorization);
         setUsers(response.data);
       } catch (err) {
         if (axios.isAxiosError(err) && err.response) {
@@ -47,14 +41,11 @@ function Home() {
   const handleUserClick = async (user: User) => {
     try {
       const response = await axios.get(`https://medic-api.vercel.app/users/details/${user.id}`, {
-        headers: {
-          'Authorization': `${token}`
-        }, withCredentials: true 
+        
       });
 
       if (response.status === 200) {
-        localStorage.setItem("accessToken", response.headers.authorization);
-        setToken(response.headers.authorization)
+        
 
 
         setSelectedUser(response.data);
