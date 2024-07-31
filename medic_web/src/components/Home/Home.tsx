@@ -21,7 +21,7 @@ function Home() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://medic-api.vercel.app/users', {
+        const response = await axios.get('https://medic-api-3vyj.vercel.app/users', {
          
         });
 
@@ -40,7 +40,7 @@ function Home() {
 
   const handleUserClick = async (user: User) => {
     try {
-      const response = await axios.get(`https://medic-api.vercel.app/users/details/${user.id}`, {
+      const response = await axios.get(`https://medic-api-3vyj.vercel.app/users/details/${user.id}`, {
         
       });
 
@@ -67,7 +67,7 @@ function Home() {
 
   const handleLogout = async (): Promise<void> => {
     try {
-      await axios.post('https://medic-api.vercel.app/logout', {}, { withCredentials: true });
+      await axios.post('https://medic-api-3vyj.vercel.app/logout', {}, { withCredentials: true });
       localStorage.removeItem('isLoggedIn');
       navigate('/');
     } catch (error) {

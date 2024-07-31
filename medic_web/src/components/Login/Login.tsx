@@ -30,10 +30,14 @@ function Login({ setIsLoggedIn }: LoginProps) {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://medic-api.vercel.app/login', 
-        { username, password }, 
-      ); 
+      const response = await axios.post('https://medic-api-3vyj.vercel.app/login', 
+        { username, password },
+        { withCredentials: true } 
+      );
+
       if (response.status === 200) {
+        // Make a request to /users to ensure session is established
+
         localStorage.setItem('isLoggedIn', "prijavljen");
         setIsLoggedIn(true);
         navigate("/home");
@@ -51,6 +55,8 @@ function Login({ setIsLoggedIn }: LoginProps) {
       setLoading(false);
     }
   };
+
+  
 
   return (
     <div className="wrapper">
