@@ -15,12 +15,12 @@ interface User {
   date_of_birth: string;
 }
 
-interface DecodedToken {
+/*interface DecodedToken {
   username: string;
   role: string;
   exp: number;
   iat: number;
-}
+}*/
 
 function Home() {
   
