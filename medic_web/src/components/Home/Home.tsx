@@ -30,29 +30,36 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    
     const fetchUsers = async () => {
       try {
-        const response = await axios.get<User[]>('https://medic-api.vercel.app/users', {
+        const response = await fetch('http://localhost:5000/users', {
+          method: 'GET',
           headers: {
-            'Authorization': `Bearer 5454` 
+            'Authorization': `${localStorage.getItem("accessToken")}`,
+            'Content-Type': 'application/json'  // Adding Content-Type header
           }
         });
-        setUsers(response.data);
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        localStorage.setItem("accessToken", [...response.headers][0][1]);
+        setUsers(data);
       } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          setError(err.response.data as string);
+        if (err instanceof Error) {
+          setError(err.message);
         } else {
           setError('An error occurred');
         }
       }
     };
-    
+  
     fetchUsers();
-    
-    
-
-
   }, []);
+  
   
   const handleUserClick = (user: User) => {
     setSelectedUser(user);
