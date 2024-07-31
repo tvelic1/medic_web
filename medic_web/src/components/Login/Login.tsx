@@ -32,7 +32,6 @@ function Login({ setIsLoggedIn }: LoginProps) {
     try {
       const response = await axios.post('https://medic-api.vercel.app/login', 
         { username, password },
-        { withCredentials: true }
       );
 
       if (response.status === 200) {

@@ -32,7 +32,7 @@ function Home() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get<User[]>('https://medic-api.vercel.app/users', { withCredentials: true });
+        const response = await axios.get<User[]>('https://medic-api.vercel.app/users', );
         setUsers(response.data);
       } catch (err) {
         if (axios.isAxiosError(err) && err.response) {
