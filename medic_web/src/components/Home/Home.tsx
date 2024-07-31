@@ -4,9 +4,6 @@ import Modal from '../Modal/Modal';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
 
-;
-
-
 interface User {
   id: number;
   username: string;
@@ -15,36 +12,27 @@ interface User {
   date_of_birth: string;
 }
 
-/*interface DecodedToken {
-  username: string;
-  role: string;
-  exp: number;
-  iat: number;
-}*/
-
 function Home() {
-  
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    
     const fetchUsers = async () => {
       try {
         const response = await fetch('https://medic-api.vercel.app/users', {
           method: 'GET',
           headers: {
             'Authorization': `${localStorage.getItem("accessToken")}`,
-            'Content-Type': 'application/json'  // Adding Content-Type header
+            'Content-Type': 'application/json'
           }
         });
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-  
+
         const data = await response.json();
         localStorage.setItem("accessToken", [...response.headers][0][1]);
         setUsers(data);
@@ -56,13 +44,32 @@ function Home() {
         }
       }
     };
-  
+
     fetchUsers();
   }, []);
-  
-  
-  const handleUserClick = (user: User) => {
-    setSelectedUser(user);
+
+  const handleUserClick = async (user: User) => {
+    try {
+      const response = await axios.get(`https://medic-api.vercel.app/users/details/${user.id}`, {
+        headers: {
+          'Authorization': `${localStorage.getItem("accessToken")}`
+        }
+      });
+
+      if (response.status === 200) {
+        localStorage.setItem("accessToken", response.headers.authorization);
+
+        setSelectedUser(response.data);
+      } else {
+        setError('User not found');
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred while fetching user details');
+      }
+    }
   };
 
   const handleCloseModal = () => {
@@ -84,8 +91,6 @@ function Home() {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button id='addButton'>Add</button>
       <button id='logoutButton' onClick={() => handleLogout()}>Logout</button>
-      
-  
 
       <div className="container">
         {users.map(user => (
