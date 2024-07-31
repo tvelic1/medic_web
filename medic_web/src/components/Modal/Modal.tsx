@@ -1,30 +1,32 @@
 import React, { ChangeEvent, useState } from "react";
 import "./Modal.css";
+import { User } from '../Home/User';
 
 interface ModalProps {
   onClose: () => void;
-  user: {
-    username: string;
-    name: string;
-    role: string;
-    date_of_birth: string;
-  };
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  user: User;
+  users:User[];
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, user }) => {
+const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
+  
   const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); 
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
   const [formValues, setFormValues] = useState({
+    id: user.id,
     username: user.username,
     name: user.name,
-    role: user.role,
+    orders: Number(user.orders),
     date_of_birth: formatDate(user.date_of_birth),
+    image_url: user.image_url,
+
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,8 +37,35 @@ const Modal: React.FC<ModalProps> = ({ onClose, user }) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const response = await fetch(`https://medic-api-3vyj.vercel.app/users/details/${formValues.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: formValues.username,
+        name: formValues.name,
+        orders: formValues.orders,
+        date_of_birth: formValues.date_of_birth,
+        image_url: formValues.image_url,
+      }),
+    });
+
+    if (response.ok) {
+      const updatedUser = await response.json();
+      const ID=updatedUser.user.id;
+      setUsers((prevUsers) =>
+        prevUsers.map((useri) => (useri.id === ID ? updatedUser.user : useri))
+      );   
+      console.log(users);
+      
+      alert("User updated successfully");
+      onClose(); // Close the modal on successful update
+    } else {
+      alert("Failed to update user");
+    }
   };
 
   return (
@@ -50,8 +79,18 @@ const Modal: React.FC<ModalProps> = ({ onClose, user }) => {
         </button>
         <h2>User Details</h2>
         <form id="modalForm" onSubmit={handleSubmit}>
+          <label className="labele" htmlFor="id">
+            ID:{" "}
+          </label>
+          <input
+            className="modalinput"
+            name="id"
+            type="text"
+            value={formValues.id.toString()}
+            readOnly
+          />
           <label className="labele" htmlFor="username">
-            Name:{" "}
+            Username:{" "}
           </label>
           <input
             className="modalinput"
@@ -63,9 +102,8 @@ const Modal: React.FC<ModalProps> = ({ onClose, user }) => {
             required
           />
           <label className="labele" htmlFor="name">
-            Username:{" "}
+            Name:{" "}
           </label>
-
           <input
             className="modalinput"
             name="name"
@@ -76,14 +114,13 @@ const Modal: React.FC<ModalProps> = ({ onClose, user }) => {
             required
           />
           <label className="labele" htmlFor="role">
-            Role:{" "}
+            Orders:{" "}
           </label>
-
           <input
             className="modalinput"
-            name="role"
+            name="orders"
             type="text"
-            value={formValues.role}
+            value={formValues.orders}
             onChange={handleChange}
             placeholder="Uloga"
             required
@@ -91,12 +128,22 @@ const Modal: React.FC<ModalProps> = ({ onClose, user }) => {
           <label className="labele" htmlFor="date_of_birth">
             Birthday:{" "}
           </label>
-
           <input
             className="modalinput"
             name="date_of_birth"
             type="date"
             value={formValues.date_of_birth}
+            onChange={handleChange}
+            required
+          />
+           <label className="labele" htmlFor="date_of_birth">
+            image_url:{" "}
+          </label>
+          <input
+            className="modalinput"
+            name="image_url"
+            type="text"
+            value={formValues.image_url}
             onChange={handleChange}
             required
           />

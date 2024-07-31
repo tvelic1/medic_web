@@ -3,14 +3,9 @@ import axios from 'axios';
 import Modal from '../Modal/Modal';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
+import { User } from './User';
 
-interface User {
-  id: number;
-  username: string;
-  name: string;
-  role: string;
-  date_of_birth: string;
-}
+
 
 function Home() {
   const [users, setUsers] = useState<User[]>([]);
@@ -47,6 +42,7 @@ function Home() {
       if (response.status === 200) {
         
         setSelectedUser(response.data);
+        console.log(response.data)
       } else {
         setError('User not found');
       }
@@ -91,13 +87,13 @@ function Home() {
               <strong>Name:</strong> {user.name}
             </div>
             <div className="role-info">
-              <strong>Role:</strong> {user.role}
+              <strong>Orders:</strong> {user.orders}
             </div>
           </div>
         ))}
       </div>
       {selectedUser && (
-        <Modal onClose={handleCloseModal} user={selectedUser} />
+        <Modal onClose={handleCloseModal} user={selectedUser} users={users} setUsers={setUsers}/>
       )}
     </div>
   );
