@@ -31,8 +31,8 @@ function Login({ setIsLoggedIn }: LoginProps) {
 
     try {
       const response = await axios.post('https://medic-api.vercel.app/login', 
-        { username, password },
-      );
+        { username, password }, 
+      ); 
       if (response.status === 200) {
         localStorage.setItem("accessToken", response.headers.authorization);
         localStorage.setItem('isLoggedIn', "prijavljen");
