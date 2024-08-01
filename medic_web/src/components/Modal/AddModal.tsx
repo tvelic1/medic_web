@@ -2,42 +2,40 @@ import React, { ChangeEvent, useState } from "react";
 import "./Modal.css";
 import { User } from '../Home/User';
 
-interface ModalProps {
+interface ModalAddProps {
   onClose: () => void;
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
-  user: User;
-  users:User[];
+
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
+const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
   
-  const formatDate = (isoDate: string) => {
+  /*const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
-  };
+  };*/
 
   const [formValues, setFormValues] = useState({
-    id: user.id,
-    username: user.username,
-    name: user.name,
-    orders: Number(user.orders),
-    date_of_birth: formatDate(user.date_of_birth),
-    image_url: user.image_url,
+    username:'',
+    password:'',
+    name:'',
+    orders: '',
+    date_of_birth:'',
+    image_url: ''
 
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === "orders") {
-      const numberValue = parseInt(value);
-      if (numberValue < 0 || numberValue > 10) {
-        return;
+        const numberValue = parseInt(value);
+        if (numberValue < 0 || numberValue > 10) {
+          return;
+        }
       }
-    }
-    
     setFormValues((prevValues) => ({
       ...prevValues,
       [name]: value,
@@ -46,8 +44,8 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await fetch(`https://medic-api-3vyj.vercel.app/users/details/${formValues.id}`, {
-      method: "PUT",
+    const response = await fetch(`https://medic-api-3vyj.vercel.app/register`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -55,6 +53,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
 
       body: JSON.stringify({
         username: formValues.username,
+        password: formValues.password,
         name: formValues.name,
         orders: formValues.orders,
         date_of_birth: formValues.date_of_birth,
@@ -63,17 +62,13 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
     });
 
     if (response.ok) {
-      const updatedUser = await response.json();
-      const ID=updatedUser.user.id;
-      setUsers((prevUsers) =>
-        prevUsers.map((useri) => (useri.id === ID ? updatedUser.user : useri))
-      );   
-      console.log(users);
+      const addedUser = await response.json();
+      setUsers((prevUsers) => [...prevUsers, addedUser.user]);
       
-      
+      alert("User added successfully");
       onClose(); 
     } else {
-      alert("Failed to update user");
+      alert("Failed to add user");
     }
   };
 
@@ -83,21 +78,10 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
         <button className="modal-close" onClick={onClose}>
           X
         </button>
-        <button className="modal-block" onClick={onClose}>
-          Block
-        </button>
-        <h2>User Details</h2>
+       
+        <h2>Add New User</h2>
         <form id="modalForm" onSubmit={handleSubmit}>
-          <label className="labele" htmlFor="id">
-            ID:{" "}
-          </label>
-          <input
-            className="modalinput"
-            name="id"
-            type="text"
-            value={formValues.id.toString()}
-            readOnly
-          />
+          
           <label className="labele" htmlFor="username">
             Username:{" "}
           </label>
@@ -110,6 +94,19 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
             placeholder="username"
             required
           />
+           <label className="labele" htmlFor="password">
+            Password:{" "}
+          </label>
+          <input
+            className="modalinput"
+            name="password"
+            type="password"
+            value={formValues.password}
+            onChange={handleChange}
+            placeholder="password"
+            required
+          />
+          
           <label className="labele" htmlFor="name">
             Name:{" "}
           </label>
@@ -140,27 +137,25 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
           <input
             className="modalinput"
             name="date_of_birth"
-            placeholder="date_of_birth"
             type="date"
             value={formValues.date_of_birth}
             onChange={handleChange}
             required
           />
-           <label className="labele" htmlFor="image_url">
+           <label className="labele" htmlFor="date_of_birth">
             image_url:{" "}
           </label>
           <input
             className="modalinput"
             name="image_url"
             type="text"
-            placeholder="image_url"
-
             value={formValues.image_url}
             onChange={handleChange}
+            placeholder="image_url"
             required
           />
           <button type="submit" className="submit-btn">
-            Update
+            Add
           </button>
         </form>
       </div>
@@ -168,4 +163,4 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
   );
 };
 
-export default Modal;
+export default AddModal;

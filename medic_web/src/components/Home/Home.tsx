@@ -4,6 +4,7 @@ import Modal from '../Modal/Modal';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
 import { User } from './User';
+import AddModal from '../Modal/AddModal';
 
 
 
@@ -11,6 +12,9 @@ function Home() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [openAddModal, setopenAddModal] = useState(false);
+
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,6 +61,7 @@ function Home() {
 
   const handleCloseModal = () => {
     setSelectedUser(null);
+    setopenAddModal(false);
   };
 
   const handleLogout = async (): Promise<void> => {
@@ -72,7 +77,7 @@ function Home() {
   return (
     <div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <button id='addButton'>Add</button>
+      <button id='addButton' onClick={()=> setopenAddModal(true)}>Add</button>
       <button id='logoutButton' onClick={() => handleLogout()}>Logout</button>
 
       <div className="container">
@@ -94,6 +99,9 @@ function Home() {
       </div>
       {selectedUser && (
         <Modal onClose={handleCloseModal} user={selectedUser} users={users} setUsers={setUsers}/>
+      )}
+      {openAddModal && (
+        <AddModal onClose={handleCloseModal} setUsers={setUsers}/>
       )}
     </div>
   );

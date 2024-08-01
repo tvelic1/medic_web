@@ -90,4 +90,19 @@
   .submit-btn:hover {
     background: #3fba9e;
   }
+  .orders-input-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  
+  .orders-input-wrapper button {
+    padding: 5px;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+  
+  .orders-input-wrapper input {
+    width: 100%;
+    text-align: center;
+  }
   
