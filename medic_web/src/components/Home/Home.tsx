@@ -88,42 +88,87 @@ function Home() {
       </button>
 
       <div className="container">
-        {users.map((user) => (
-          <div
-          className="card"
-            key={user.id}
-            onClick={() => handleUserClick(user)}
-            onMouseEnter={() => setHoveredUserId(user.id)}
-            onMouseLeave={() => setHoveredUserId(null)}
-            style={{
-              backgroundColor: user.status === "blocked" ? "red" : "#fff",
-            }}
-          >
-            <div style={{ marginTop: "-20px", marginBottom: "15px" }}>
-              <strong>{user.name}</strong>
+        {users
+          .filter((user) => user.status === "active")
+          .map((user) => (
+            <div
+              className="card"
+              key={user.id}
+              onClick={() => handleUserClick(user)}
+              onMouseEnter={() => setHoveredUserId(user.id)}
+              onMouseLeave={() => setHoveredUserId(null)}
+            >
+              <div style={{ marginTop: "-20px", marginBottom: "15px" }}>
+                <strong>{user.name}</strong>
+              </div>
+              <img src={user.image_url} />
+              <div className="user-info">
+                <strong>Username:</strong> {user.username}
+                <br />
+                <strong>Birthday:</strong>{" "}
+                {formatDate(user.date_of_birth)
+                  .split("-")
+                  .reverse()
+                  .join(".") ?? "Unknown"}
+              </div>
+              <div className="role-info">
+                <strong>ID:</strong> {user.id}
+                <br />
+                <strong>Orders:</strong> {user.orders}
+              </div>
+              {hoveredUserId === user.id && (
+                <p id="hover-info">
+                  Last login date:{" "}
+                  {formatDate(user.last_login).split("-").reverse().join(".") ??
+                    "Never"}
+                </p>
+              )}
+
+              
             </div>
-            <img src={user.image_url} />
-            <div className="user-info">
-              <strong>Username:</strong> {user.username}
-              <br />
-              <strong>Birthday:</strong>{" "}
-              {formatDate(user.date_of_birth).split("-").reverse().join(".") ??
-                "Unknown"}
+          ))}
+          {users
+          .filter((user) => user.status === "blocked")
+          .map((user) => (
+            <div
+              className="card card-blocked"
+              key={user.id}
+              onClick={() => handleUserClick(user)}
+              onMouseEnter={() => setHoveredUserId(user.id)}
+              onMouseLeave={() => setHoveredUserId(null)}
+            >
+              <div style={{ marginTop: "-20px", marginBottom: "15px" }}>
+                <strong>{user.name}</strong>
+              </div>
+              <img src={user.image_url} />
+              <div className="user-info">
+                <strong>Username:</strong> {user.username}
+                <br />
+                <strong>Birthday:</strong>{" "}
+                {formatDate(user.date_of_birth)
+                  .split("-")
+                  .reverse()
+                  .join(".") ?? "Unknown"}
+              </div>
+              <div className="role-info">
+                <strong>ID:</strong> {user.id}
+                <br />
+                <strong>Orders:</strong> {user.orders}
+              </div>
+              {hoveredUserId === user.id && (
+                <p id="hover-info">
+                  Last login date:{" "}
+                  {formatDate(user.last_login).split("-").reverse().join(".") ??
+                    "Never"}
+                </p>
+              )}
+
+              
             </div>
-            <div className="role-info">
-              <strong>ID:</strong> {user.id}
-              <br />
-              <strong>Orders:</strong> {user.orders}
-            </div>
-            {hoveredUserId === user.id && (
-              <p id="hover-info">
-                Last login date:{" "}
-                {formatDate(user.last_login).split("-").reverse().join(".") ??
-                  "Never"}
-              </p>
-            )}
-          </div>
-        ))}
+          ))}
+
+
+
       </div>
       {selectedUser && (
         <Modal
