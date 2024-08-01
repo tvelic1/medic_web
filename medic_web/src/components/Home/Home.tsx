@@ -90,7 +90,7 @@ function Home() {
       <div className="container">
         {users.map((user) => (
           <div
-          className={`card ${user.status === "blocked" ? "card-blocked" : ""}`}
+          className="card"
             key={user.id}
             onClick={() => handleUserClick(user)}
             onMouseEnter={() => setHoveredUserId(user.id)}
