@@ -64,7 +64,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
       console.log(users);
       
       alert("User updated successfully");
-      onClose(); // Close the modal on successful update
+      onClose(); 
     } else {
       alert("Failed to update user");
     }

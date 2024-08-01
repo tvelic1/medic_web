@@ -1,0 +1,39 @@
+/* FailedLogin.css */
+
+.flogin-overlay {
+    position: fixed;
+    top: 0;
+    left: 14%;
+    width: 70%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .flogin-content {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    max-width: 400px;
+    width: 70%;
+    color: white; 
+  }
+  
+  .flogin-close-btn {
+    background-color: rgb(245, 11, 11);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .flogin-content p {
+    color: rgb(245, 11, 11); 
+    font-size: 17px;
+  }
+  

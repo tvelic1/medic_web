@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import axios from "axios";
+import FailedLogin from "../FailedLogin/FailedLogin";
 
 interface LoginProps {
   setIsLoggedIn: (value: boolean) => void;
@@ -12,6 +13,7 @@ function Login({ setIsLoggedIn }: LoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,37 +27,40 @@ function Login({ setIsLoggedIn }: LoginProps) {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await axios.post('https://medic-api-3vyj.vercel.app/login', 
+      const response = await axios.post(
+        "https://medic-api-3vyj.vercel.app/login",
         { username, password },
-        { withCredentials: true } 
+        { withCredentials: true }
       );
 
       if (response.status === 200) {
-
-        localStorage.setItem('isLoggedIn', "prijavljen");
+        localStorage.setItem("isLoggedIn", "prijavljen");
         setIsLoggedIn(true);
         navigate("/home");
       }
     } catch (error) {
-      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem("isLoggedIn");
       setIsLoggedIn(false);
       if (axios.isAxiosError(error)) {
-        console.error('Login failed:', error.response?.data || error.message);
-        //alert('Login failed: ' + (error.response?.data || error.message));
+        console.error("Login failed:", error.response?.data || error.message);
+        setError("Login failed: " + (error.response?.data || error.message));
       } else {
-        console.error('An unexpected error occurred:', error);
+        console.error("An unexpected error occurred:", error);
       }
     } finally {
       setLoading(false);
     }
   };
-
-  
+  const closeModal = () => {
+    setError(null);
+  };
 
   return (
     <div className="wrapper">
@@ -67,6 +72,7 @@ function Login({ setIsLoggedIn }: LoginProps) {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
           <i className="bx bxs-user"></i>
         </div>
@@ -76,6 +82,7 @@ function Login({ setIsLoggedIn }: LoginProps) {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <i
             className={passwordVisible ? "bx bxs-show" : "bx bxs-hide"}
@@ -86,6 +93,7 @@ function Login({ setIsLoggedIn }: LoginProps) {
           {loading ? <div className="loader"></div> : "Login"}
         </button>
       </form>
+      {error && <FailedLogin message={error} onClose={closeModal} />}
     </div>
   );
 }
