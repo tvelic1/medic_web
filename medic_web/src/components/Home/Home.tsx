@@ -3,27 +3,24 @@ import axios from "axios";
 import Modal from "../Modal/Modal";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
-import { User } from "./User";
+import { User } from "../../interfaces/User";
 import AddModal from "../Modal/AddModal";
+import { formatDate } from "../../helpers/dateForDatabase";
 
 function Home() {
+
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [openAddModal, setopenAddModal] = useState(false);
   const [hoveredUserId, setHoveredUserId] = useState<number | null>(null);
 
-  const formatDate = (isoDate: string) => {
-    const date = new Date(isoDate);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+ 
 
   const navigate = useNavigate();
 
   useEffect(() => {
+
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
@@ -42,6 +39,7 @@ function Home() {
     };
 
     fetchUsers();
+
   }, []);
 
   const handleUserClick = async (user: User) => {
@@ -133,7 +131,6 @@ function Home() {
         <Modal
           onClose={handleCloseModal}
           user={selectedUser}
-          users={users}
           setUsers={setUsers}
         />
       )}

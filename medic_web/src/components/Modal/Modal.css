@@ -88,7 +88,7 @@
   }
   
   .submit-btn:hover {
-    background: #3fba9e;
+    background: #20bc97;
   }
   .orders-input-wrapper {
     display: flex;
@@ -97,9 +97,15 @@
   
   .orders-input-wrapper button {
     padding: 5px;
-    margin: 0 5px;
+    margin: 1px 5px;
     cursor: pointer;
+    transform: translateY(-6.5px);
   }
+  .orders-input-wrapper button:hover{
+    background: #67e2c6;
+
+  }
+  
   
   .orders-input-wrapper input {
     width: 100%;

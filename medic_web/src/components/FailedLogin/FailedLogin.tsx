@@ -1,12 +1,10 @@
 import React from "react";
 import "./FailedLogin.css";
+import { IFailedLogin } from "../../interfaces/ModalProps";
 
-interface ModalProps {
-  message: string;
-  onClose: () => void;
-}
 
-const FailedLogin: React.FC<ModalProps> = ({ message, onClose }) => {
+
+const FailedLogin: React.FC<IFailedLogin> = ({ message, onClose }) => {
   return (
     <div className="flogin-overlay">
       <div className="flogin-content">

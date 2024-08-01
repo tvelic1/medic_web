@@ -3,10 +3,9 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import axios from "axios";
 import FailedLogin from "../FailedLogin/FailedLogin";
+import { LoginProps } from "../../interfaces/LoginProps";
 
-interface LoginProps {
-  setIsLoggedIn: (value: boolean) => void;
-}
+
 
 function Login({ setIsLoggedIn }: LoginProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -58,6 +57,7 @@ function Login({ setIsLoggedIn }: LoginProps) {
       setLoading(false);
     }
   };
+  
   const closeModal = () => {
     setError(null);
   };

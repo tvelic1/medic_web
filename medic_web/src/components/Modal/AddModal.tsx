@@ -1,34 +1,27 @@
 import React, { ChangeEvent, useState } from "react";
 import "./Modal.css";
-import { User } from '../Home/User';
+import { ModalAddProps } from "../../interfaces/ModalProps";
+import { handleDecrementOrdersUser, handleIncrementOrdersUser } from "../../helpers/handleOrders";
+import { validateImageUrl } from "../../helpers/checkImageURL";
+import { User } from "../../interfaces/User";
 
-interface ModalAddProps {
-  onClose: () => void;
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
-
-}
 
 const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
-  
-  /*const formatDate = (isoDate: string) => {
-    const date = new Date(isoDate);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };*/
-
-  const [formValues, setFormValues] = useState({
+ 
+  const [formValues, setFormValues] = useState<User>({
+    id:0,
     username:'',
     password:'',
     name:'',
-    orders: '',
+    orders: 0,
     date_of_birth:'',
-    image_url: ''
+    image_url: '',
+    status:'',
+    last_login:'' //neki od ovih atributa su nebitni za dodavanje usera, jer se imaju default vrijednost u bazi, ali su tu zbog kompatibilnosti tipova
 
   });
-  const defaultImageUrl = 'https://c0.wallpaperflare.com/preview/386/354/385/analysis-hospital-doctor-medical.jpg'; 
 
+ 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
   
@@ -39,7 +32,6 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
       }
     }
   
-    
       setFormValues((prevValues) => ({
         ...prevValues,
         [name]: value,
@@ -50,22 +42,7 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    const img = new Image();
-    let imageUrl = formValues.image_url;
-  
-    const checkImage = (url: string) => {
-      return new Promise((resolve) => {
-        img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
-        img.src = url;
-      });
-    };
-  
-    const isValidImage = await checkImage(formValues.image_url);
-  
-    if (!isValidImage) {
-      imageUrl = defaultImageUrl;
-    }
+    let imageUrl = await validateImageUrl(formValues.image_url);
   
     const response = await fetch(`https://medic-api-3vyj.vercel.app/register`, {
       method: "POST",
@@ -84,17 +61,19 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
     });
   
     if (response.ok) {
+
       const addedUser = await response.json();
       setUsers((prevUsers) => [...prevUsers, addedUser.user]);
-  
       alert("User added successfully");
       onClose(); 
+
     } else {
       alert("Failed to add user");
     }
   };
-  
 
+  
+  
   return (
     <div className="modal">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -145,15 +124,19 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
           <label className="labele" htmlFor="role">
             Orders:{" "}
           </label>
+          <div className="orders-input-wrapper">
+          <button type="button" onClick={()=>handleDecrementOrdersUser(setFormValues)}>-</button>
           <input
             className="modalinput"
             name="orders"
-            type="number"
+            type="text"
             value={formValues.orders}
             onChange={handleChange}
             placeholder="orders"
             required
           />
+          <button type="button" onClick={()=>handleIncrementOrdersUser(setFormValues)}>+</button>
+        </div>
           <label className="labele" htmlFor="date_of_birth">
             Birthday:{" "}
           </label>
