@@ -88,13 +88,16 @@ function Home() {
       </button>
 
       <div className="container">
-        {users.map((user) => (
+        {users.sort((a) => (a.status === "blocked" ? 1 : -1)).map((user) => (
           <div
           className="card"
             key={user.id}
             onClick={() => handleUserClick(user)}
             onMouseEnter={() => setHoveredUserId(user.id)}
             onMouseLeave={() => setHoveredUserId(null)}
+            style={{
+              backgroundColor: user.status === "blocked" ? "red" : "#fff",
+            }}
           >
             <div style={{ marginTop: "-20px", marginBottom: "15px" }}>
               <strong>{user.name}</strong>
