@@ -10,7 +10,8 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
-  
+  const defaultImageUrl = 'https://c0.wallpaperflare.com/preview/386/354/385/analysis-hospital-doctor-medical.jpg'; 
+
   const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
     const year = date.getFullYear();
@@ -46,6 +47,22 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const img = new Image();
+    let imageUrl = formValues.image_url;
+  
+    const checkImage = (url: string) => {
+      return new Promise((resolve) => {
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
+    };
+  
+    const isValidImage = await checkImage(formValues.image_url);
+  
+    if (!isValidImage) {
+      imageUrl = defaultImageUrl;
+    }
     const response = await fetch(`https://medic-api-3vyj.vercel.app/users/details/${formValues.id}`, {
       method: "PUT",
       headers: {
@@ -58,7 +75,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
         name: formValues.name,
         orders: formValues.orders,
         date_of_birth: formValues.date_of_birth,
-        image_url: formValues.image_url,
+        image_url: imageUrl,
       }),
     });
 

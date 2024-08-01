@@ -27,50 +27,73 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
     image_url: ''
 
   });
+  const defaultImageUrl = 'https://c0.wallpaperflare.com/preview/386/354/385/analysis-hospital-doctor-medical.jpg'; 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+  
     if (name === "orders") {
-        const numberValue = parseInt(value);
-        if (numberValue < 0 || numberValue > 10) {
-          return;
-        }
+      const numberValue = parseInt(value);
+      if (numberValue < 0 || numberValue > 10) {
+        return;
       }
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+    }
+  
+    
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
+    
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  
+    const img = new Image();
+    let imageUrl = formValues.image_url;
+  
+    const checkImage = (url: string) => {
+      return new Promise((resolve) => {
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
+    };
+  
+    const isValidImage = await checkImage(formValues.image_url);
+  
+    if (!isValidImage) {
+      imageUrl = defaultImageUrl;
+    }
+  
     const response = await fetch(`https://medic-api-3vyj.vercel.app/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: 'include',  
-
       body: JSON.stringify({
         username: formValues.username,
         password: formValues.password,
         name: formValues.name,
         orders: formValues.orders,
         date_of_birth: formValues.date_of_birth,
-        image_url: formValues.image_url,
+        image_url: imageUrl,
       }),
     });
-
+  
     if (response.ok) {
       const addedUser = await response.json();
       setUsers((prevUsers) => [...prevUsers, addedUser.user]);
-      
+  
       alert("User added successfully");
       onClose(); 
     } else {
       alert("Failed to add user");
     }
   };
+  
 
   return (
     <div className="modal">

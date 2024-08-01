@@ -5,4 +5,6 @@ export interface User {
     orders: string;
     date_of_birth: string;
     image_url:string;
+    status:string;
+    last_login:string;
   }
