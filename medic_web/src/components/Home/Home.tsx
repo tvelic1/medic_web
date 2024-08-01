@@ -88,7 +88,7 @@ function Home() {
       </button>
 
       <div className="container">
-        {users.sort((a) => (a.status === "blocked" ? 1 : -1)).map((user) => (
+        {users.map((user) => (
           <div
           className={`card ${user.status === "blocked" ? "card-blocked" : ""}`}
             key={user.id}
