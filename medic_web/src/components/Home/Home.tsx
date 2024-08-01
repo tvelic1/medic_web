@@ -122,7 +122,7 @@ function Home() {
           </div>
         ))}
       </div>
-      {selectedUser?.status==='active' && (
+      {selectedUser && (
         <Modal
           onClose={handleCloseModal}
           user={selectedUser}
