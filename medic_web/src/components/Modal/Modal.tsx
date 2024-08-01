@@ -48,6 +48,38 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
   };
 
+  const handleBlockUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+  
+    try {
+      const response = await axios.put(
+        `https://medic-api-3vyj.vercel.app/users/block/${formValues.id}`,
+        {
+          status: "blocked",
+        },
+        {withCredentials: true}
+      
+      );
+
+      const blockedUser = response.data;
+      const ID = blockedUser.user.id;
+      setUsers((prevUsers) =>
+        prevUsers.map((useri) =>
+          useri.id === ID ? { ...useri, status: "blocked" } : useri
+        ) )
+      
+      onClose(); 
+
+    } catch (error) {
+      alert("Failed to block user");
+    }
+  };
+
+  
+
+
+  
 
   return (
     <div className="modal">
@@ -55,7 +87,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         <button className="modal-close" onClick={onClose}>
           X
         </button>
-        <button className="modal-block" onClick={onClose}>
+        <button className="modal-block" onClick={handleBlockUser}>
           Block
         </button>
         <h2>User Details</h2>

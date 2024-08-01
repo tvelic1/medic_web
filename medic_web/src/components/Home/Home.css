@@ -46,6 +46,9 @@ body::before {
   cursor: pointer;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
+.card-blocked {
+  background-color: red;
+}
 
 .card:hover {
   transform: scale(1.2);
