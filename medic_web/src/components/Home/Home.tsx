@@ -95,7 +95,9 @@ function Home() {
             onClick={() => handleUserClick(user)}
             onMouseEnter={() => setHoveredUserId(user.id)}
             onMouseLeave={() => setHoveredUserId(null)}
-            
+            style={{
+              backgroundColor: user.status === "blocked" ? "red" : "#fff",
+            }}
           >
             <div style={{ marginTop: "-20px", marginBottom: "15px" }}>
               <strong>{user.name}</strong>
