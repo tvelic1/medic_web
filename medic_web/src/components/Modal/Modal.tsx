@@ -44,6 +44,8 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, users, setUsers }) => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: 'include',  
+
       body: JSON.stringify({
         username: formValues.username,
         name: formValues.name,

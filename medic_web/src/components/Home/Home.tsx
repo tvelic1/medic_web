@@ -16,7 +16,7 @@ function Home() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://medic-api-3vyj.vercel.app/users', {
+        const response = await axios.get('https://medic-api-3vyj.vercel.app/users', { withCredentials:true,
          
         });
 
@@ -35,7 +35,7 @@ function Home() {
 
   const handleUserClick = async (user: User) => {
     try {
-      const response = await axios.get(`https://medic-api-3vyj.vercel.app/users/details/${user.id}`, {
+      const response = await axios.get(`https://medic-api-3vyj.vercel.app/users/details/${user.id}`, { withCredentials:true,
         
       });
 

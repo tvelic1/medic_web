@@ -36,7 +36,6 @@ function Login({ setIsLoggedIn }: LoginProps) {
       );
 
       if (response.status === 200) {
-        // Make a request to /users to ensure session is established
 
         localStorage.setItem('isLoggedIn', "prijavljen");
         setIsLoggedIn(true);
