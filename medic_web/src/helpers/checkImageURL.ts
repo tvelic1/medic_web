@@ -1,3 +1,5 @@
+
+
 export const validateImageUrl = async (url: string): Promise<string> => {
     const img = new Image();
     const defaultImageUrl = 'https://c0.wallpaperflare.com/preview/386/354/385/analysis-hospital-doctor-medical.jpg'; 

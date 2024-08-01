@@ -1,3 +1,5 @@
+
+
 export const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
     const year = date.getFullYear();

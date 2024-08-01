@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import axios from "axios";
 import FailedLogin from "../FailedLogin/FailedLogin";
 import { LoginProps } from "../../interfaces/LoginProps";
+import { makeRequest } from "../../axios/makeRequest";
 
 
 
@@ -31,15 +31,15 @@ function Login({ setIsLoggedIn }: LoginProps) {
   ): Promise<void> => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
-      const response = await axios.post(
-        "https://medic-api-3vyj.vercel.app/login",
-        { username, password },
-        { withCredentials: true }
-      );
-
-      if (response.status === 200) {
+      const response = await makeRequest({
+        method: 'POST',
+        endpoint: '/login',
+        data: { username, password },
+      });
+  
+      if (response) {
         localStorage.setItem("isLoggedIn", "prijavljen");
         setIsLoggedIn(true);
         navigate("/home");
@@ -47,9 +47,9 @@ function Login({ setIsLoggedIn }: LoginProps) {
     } catch (error) {
       localStorage.removeItem("isLoggedIn");
       setIsLoggedIn(false);
-      if (axios.isAxiosError(error)) {
-        console.error("Login failed:", error.response?.data || error.message);
-        setError("Login failed: " + (error.response?.data || error.message));
+      if (error instanceof Error) {
+        console.error("Login failed:", error.message);
+        setError("Login failed: " + error.message);
       } else {
         console.error("An unexpected error occurred:", error);
       }

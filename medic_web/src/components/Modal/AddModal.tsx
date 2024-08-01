@@ -1,89 +1,66 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import "./Modal.css";
 import { ModalAddProps } from "../../interfaces/ModalProps";
-import { handleDecrementOrdersUser, handleIncrementOrdersUser } from "../../helpers/handleOrders";
+import {
+  handleDecrementOrdersUser,
+  handleIncrementOrdersUser,
+} from "../../helpers/handleOrders";
 import { validateImageUrl } from "../../helpers/checkImageURL";
 import { User } from "../../interfaces/User";
-
+import { handleChange } from "../../helpers/handleChange";
+import axios from "axios";
 
 const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
- 
   const [formValues, setFormValues] = useState<User>({
-    id:0,
-    username:'',
-    password:'',
-    name:'',
+    id: 0,
+    username: "",
+    password: "",
+    name: "",
     orders: 0,
-    date_of_birth:'',
-    image_url: '',
-    status:'',
-    last_login:'' //neki od ovih atributa su nebitni za dodavanje usera, jer se imaju default vrijednost u bazi, ali su tu zbog kompatibilnosti tipova
-
+    date_of_birth: "",
+    image_url: "",
+    status: "",
+    last_login: "", //neki od ovih atributa su nebitni za dodavanje usera, jer se imaju default vrijednost u bazi, ali su tu zbog kompatibilnosti tipova
   });
-
- 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-  
-    if (name === "orders") {
-      const numberValue = parseInt(value);
-      if (numberValue < 0 || numberValue > 10) {
-        return;
-      }
-    }
-  
-      setFormValues((prevValues) => ({
-        ...prevValues,
-        [name]: value,
-      }));
-    
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     let imageUrl = await validateImageUrl(formValues.image_url);
-  
-    const response = await fetch(`https://medic-api-3vyj.vercel.app/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: 'include',  
-      body: JSON.stringify({
-        username: formValues.username,
-        password: formValues.password,
-        name: formValues.name,
-        orders: formValues.orders,
-        date_of_birth: formValues.date_of_birth,
-        image_url: imageUrl,
-      }),
-    });
-  
-    if (response.ok) {
 
-      const addedUser = await response.json();
-      setUsers((prevUsers) => [...prevUsers, addedUser.user]);
-      alert("User added successfully");
-      onClose(); 
+    try {
+        const response = await axios.post(
+            `https://medic-api-3vyj.vercel.app/register`,
+            {
+                username: formValues.username,
+                password: formValues.password,
+                name: formValues.name,
+                orders: formValues.orders,
+                date_of_birth: formValues.date_of_birth,
+                image_url: imageUrl,
+            },
+            
+                {withCredentials: true}
+        );
 
-    } else {
-      alert("Failed to add user");
+        const addedUser = response.data;
+        setUsers((prevUsers) => [...prevUsers, addedUser.user]);
+        alert("User added successfully");
+        onClose();
+    } catch (error) {
+        alert("Failed to add user");
     }
-  };
+};
 
-  
-  
   return (
     <div className="modal">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>
           X
         </button>
-       
+
         <h2>Add New User</h2>
         <form id="modalForm" onSubmit={handleSubmit}>
-          
           <label className="labele" htmlFor="username">
             Username:{" "}
           </label>
@@ -92,11 +69,11 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
             name="username"
             type="text"
             value={formValues.username}
-            onChange={handleChange}
+            onChange={(e) => handleChange(e, setFormValues)}
             placeholder="username"
             required
           />
-           <label className="labele" htmlFor="password">
+          <label className="labele" htmlFor="password">
             Password:{" "}
           </label>
           <input
@@ -104,11 +81,11 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
             name="password"
             type="password"
             value={formValues.password}
-            onChange={handleChange}
+            onChange={(e) => handleChange(e, setFormValues)}
             placeholder="password"
             required
           />
-          
+
           <label className="labele" htmlFor="name">
             Name:{" "}
           </label>
@@ -117,7 +94,7 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
             name="name"
             type="text"
             value={formValues.name}
-            onChange={handleChange}
+            onChange={(e) => handleChange(e, setFormValues)}
             placeholder="name"
             required
           />
@@ -125,18 +102,28 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
             Orders:{" "}
           </label>
           <div className="orders-input-wrapper">
-          <button type="button" onClick={()=>handleDecrementOrdersUser(setFormValues)}>-</button>
-          <input
-            className="modalinput"
-            name="orders"
-            type="text"
-            value={formValues.orders}
-            onChange={handleChange}
-            placeholder="orders"
-            required
-          />
-          <button type="button" onClick={()=>handleIncrementOrdersUser(setFormValues)}>+</button>
-        </div>
+            <button
+              type="button"
+              onClick={() => handleDecrementOrdersUser(setFormValues)}
+            >
+              -
+            </button>
+            <input
+              className="modalinput"
+              name="orders"
+              type="text"
+              value={formValues.orders}
+              onChange={(e) => handleChange(e, setFormValues)}
+              placeholder="orders"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => handleIncrementOrdersUser(setFormValues)}
+            >
+              +
+            </button>
+          </div>
           <label className="labele" htmlFor="date_of_birth">
             Birthday:{" "}
           </label>
@@ -145,10 +132,10 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
             name="date_of_birth"
             type="date"
             value={formValues.date_of_birth}
-            onChange={handleChange}
+            onChange={(e) => handleChange(e, setFormValues)}
             required
           />
-           <label className="labele" htmlFor="date_of_birth">
+          <label className="labele" htmlFor="date_of_birth">
             image_url:{" "}
           </label>
           <input
@@ -156,7 +143,7 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
             name="image_url"
             type="text"
             value={formValues.image_url}
-            onChange={handleChange}
+            onChange={(e) => handleChange(e, setFormValues)}
             placeholder="image_url"
             required
           />

@@ -8,19 +8,15 @@ import AddModal from "../Modal/AddModal";
 import { formatDate } from "../../helpers/dateForDatabase";
 
 function Home() {
-
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [openAddModal, setopenAddModal] = useState(false);
   const [hoveredUserId, setHoveredUserId] = useState<number | null>(null);
 
- 
-
   const navigate = useNavigate();
 
   useEffect(() => {
-
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
@@ -39,7 +35,6 @@ function Home() {
     };
 
     fetchUsers();
-
   }, []);
 
   const handleUserClick = async (user: User) => {
@@ -51,7 +46,6 @@ function Home() {
 
       if (response.status === 200) {
         setSelectedUser(response.data);
-        console.log(response.data);
       } else {
         setError("User not found");
       }
@@ -68,7 +62,6 @@ function Home() {
     setSelectedUser(null);
     setopenAddModal(false);
   };
-  
 
   const handleLogout = async (): Promise<void> => {
     try {
@@ -106,9 +99,7 @@ function Home() {
             <div style={{ marginTop: "-20px", marginBottom: "15px" }}>
               <strong>{user.name}</strong>
             </div>
-            <img
-              src={user.image_url}
-            />
+            <img src={user.image_url} />
             <div className="user-info">
               <strong>Username:</strong> {user.username}
               <br />
@@ -122,7 +113,11 @@ function Home() {
               <strong>Orders:</strong> {user.orders}
             </div>
             {hoveredUserId === user.id && (
-              <p id="hover-info">Last login date: {formatDate(user.last_login).split("-").reverse().join(".") ?? "Never"}</p>
+              <p id="hover-info">
+                Last login date:{" "}
+                {formatDate(user.last_login).split("-").reverse().join(".") ??
+                  "Never"}
+              </p>
             )}
           </div>
         ))}

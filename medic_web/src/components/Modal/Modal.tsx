@@ -1,10 +1,12 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import "./Modal.css";
 import { ModalProps } from "../../interfaces/ModalProps";
 import { formatDate } from "../../helpers/dateForDatabase";
 import {User} from "../../interfaces/User";
 import { handleDecrementOrdersUser, handleIncrementOrdersUser } from "../../helpers/handleOrders";
 import { validateImageUrl } from "../../helpers/checkImageURL";
+import { handleChange } from "../../helpers/handleChange";
+import axios from "axios";
 
 
 
@@ -13,58 +15,39 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
   const [formValues, setFormValues] = useState<User>({...user,date_of_birth: formatDate(user.date_of_birth)})
   //neki od atributa usera su nebitni za update usera, jer se ne trebaju update, ali su tu zbog kompatibilnosti tipova
   
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
 
-    const { name, value } = e.target;
-
-    if (name === "orders") {
-      const numberValue = parseInt(value);
-      if (numberValue < 0 || numberValue > 10) {
-        return;
-      }
-    }
-    
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     let imageUrl = await validateImageUrl(formValues.image_url);
   
-    const response = await fetch(`https://medic-api-3vyj.vercel.app/users/details/${formValues.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: 'include',  
+    try {
+      const response = await axios.put(
+        `https://medic-api-3vyj.vercel.app/users/details/${formValues.id}`,
+        {
+          username: formValues.username,
+          name: formValues.name,
+          orders: formValues.orders,
+          date_of_birth: formValues.date_of_birth,
+          image_url: imageUrl,
+        },
+        {withCredentials: true}
+      
+      );
 
-      body: JSON.stringify({
-        username: formValues.username,
-        name: formValues.name,
-        orders: formValues.orders,
-        date_of_birth: formValues.date_of_birth,
-        image_url: imageUrl,
-      }),
-    });
-
-    if (response.ok) {
-      const updatedUser = await response.json();
-      const ID=updatedUser.user.id;
+      const updatedUser = response.data;
+      const ID = updatedUser.user.id;
       setUsers((prevUsers) =>
         prevUsers.map((useri) => (useri.id === ID ? updatedUser.user : useri))
       );   
       
       onClose(); 
 
-    } else {
+    } catch (error) {
       alert("Failed to update user");
     }
   };
+
 
   return (
     <div className="modal">
@@ -95,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
             name="username"
             type="text"
             value={formValues.username}
-            onChange={handleChange}
+            onChange={(e)=>handleChange(e,setFormValues)}
             placeholder="username"
             required
           />
@@ -107,7 +90,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
             name="name"
             type="text"
             value={formValues.name}
-            onChange={handleChange}
+            onChange={(e)=>handleChange(e,setFormValues)}
             placeholder="name"
             required
           />
@@ -121,7 +104,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
             name="orders"
             type="text"
             value={formValues.orders}
-            onChange={handleChange}
+            onChange={(e)=>handleChange(e,setFormValues)}
             placeholder="orders"
             required
           />
@@ -136,7 +119,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
             placeholder="date_of_birth"
             type="date"
             value={formValues.date_of_birth}
-            onChange={handleChange}
+            onChange={(e)=>handleChange(e,setFormValues)}
             required
           />
            <label className="labele" htmlFor="image_url">
@@ -149,7 +132,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
             placeholder="image_url"
 
             value={formValues.image_url}
-            onChange={handleChange}
+            onChange={(e)=>handleChange(e,setFormValues)}
             required
           />
           <button type="submit" className="submit-btn">
