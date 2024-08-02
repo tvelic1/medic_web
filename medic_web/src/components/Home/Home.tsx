@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Modal from "../Modal/Modal";
+import Modal from "../Modal/UpdateModal";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../interfaces/User";
@@ -7,6 +7,7 @@ import AddModal from "../Modal/AddModal";
 import { UserCard } from "../Cards/UserCard";
 import { BlockedUserCard } from "../Cards/BlockedUserCard";
 import { makeRequest } from "../../axios/makeRequest";
+import BlockedUserModal from "../Modal/BlockedUserModal";
 
 function Home() {
   const [users, setUsers] = useState<User[]>([]);
@@ -124,13 +125,22 @@ function Home() {
 
 
       </div>
-      {selectedUser && (
+      {selectedUser?.status==='active'  && (
         <Modal
           onClose={handleCloseModal}
           user={selectedUser}
           setUsers={setUsers}
         />
       )}
+
+      {selectedUser?.status==='blocked'  && (
+        <BlockedUserModal
+          onClose={handleCloseModal}
+          user={selectedUser}
+          setUsers={setUsers}
+        />
+      )}
+     
       {openAddModal && (
         <AddModal onClose={handleCloseModal} setUsers={setUsers} />
       )}

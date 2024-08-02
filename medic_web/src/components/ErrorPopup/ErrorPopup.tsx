@@ -1,10 +1,10 @@
 import React from "react";
-import "./FailedLogin.css";
-import { IFailedLogin } from "../../interfaces/ModalProps";
+import "./ErrorPopup.css";
+import { IErrorPopup } from "../../interfaces/ModalProps";
 
 
 
-const FailedLogin: React.FC<IFailedLogin> = ({ message, onClose }) => {
+const ErrorPopup: React.FC<IErrorPopup> = ({ message, onClose }) => {
   return (
     <div className="flogin-overlay">
       <div className="flogin-content">
@@ -15,4 +15,4 @@ const FailedLogin: React.FC<IFailedLogin> = ({ message, onClose }) => {
   );
 };
 
-export default FailedLogin;
+export default ErrorPopup;

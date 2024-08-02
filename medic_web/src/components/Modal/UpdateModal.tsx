@@ -7,6 +7,7 @@ import { handleDecrementOrdersUser, handleIncrementOrdersUser } from "../../help
 import { validateImageUrl } from "../../helpers/checkImageURL";
 import { handleChange } from "../../helpers/handleChange";
 import { makeRequest } from "../../axios/makeRequest";
+import ErrorPopup from "../ErrorPopup/ErrorPopup";
 
 
 
@@ -14,7 +15,8 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
 
   const [formValues, setFormValues] = useState<User>({...user,date_of_birth: formatDate(user.date_of_birth)})
   //neki od atributa usera su nebitni za update usera, jer se ne trebaju update, ali su tu zbog kompatibilnosti tipova
-  
+  const [error, setError]=useState<string|null>(null);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
 
@@ -39,7 +41,6 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
     if (user.image_url !== imageUrl) {
       body.image_url = imageUrl;
     }
-    //console.log(body);
     try {
       const updatedUser = await makeRequest({
         method: 'PUT',
@@ -55,9 +56,9 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
       onClose();
     } catch (err) {
       if (err instanceof Error) {
-        alert(`Failed to update user: ${err.message}`);
+        setError(`${err.message}`);
       } else {
-        alert("Failed to update user");
+        setError("Failed to update user");
       }
     }
   };
@@ -183,6 +184,8 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
             Update
           </button>
         </form>
+        {error && <ErrorPopup message={error} onClose={()=> setError(null)} />}
+
       </div>
     </div>
   );

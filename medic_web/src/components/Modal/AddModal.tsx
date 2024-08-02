@@ -8,8 +8,8 @@ import {
 import { validateImageUrl } from "../../helpers/checkImageURL";
 import { User } from "../../interfaces/User";
 import { handleChange } from "../../helpers/handleChange";
-import FailedLogin from "../FailedLogin/FailedLogin";
 import { makeRequest } from "../../axios/makeRequest";
+import ErrorPopup from "../ErrorPopup/ErrorPopup";
 
 const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
 
@@ -22,7 +22,8 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
     date_of_birth: "",
     image_url: "",
     status: "",
-    last_login: "", //neki od ovih atributa su nebitni za dodavanje usera, jer se imaju default vrijednost u bazi, ali su tu zbog kompatibilnosti tipova
+    last_login: "", 
+    //neki od ovih atributa su nebitni za dodavanje usera, jer se imaju default vrijednost u bazi, ali su tu zbog kompatibilnosti tipova
   });
 
   const [error, setError]=useState<string|null>(null);
@@ -162,7 +163,7 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
             Add
           </button>
         </form>
-        {error && <FailedLogin message={error} onClose={()=> setError(null)} />}
+        {error && <ErrorPopup message={error} onClose={()=> setError(null)} />}
         </div>
     </div>
   );

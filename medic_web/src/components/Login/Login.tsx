@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import FailedLogin from "../FailedLogin/FailedLogin";
 import { LoginProps } from "../../interfaces/LoginProps";
 import { makeRequest } from "../../axios/makeRequest";
+import ErrorPopup from "../ErrorPopup/ErrorPopup";
 
 
 
@@ -93,7 +93,7 @@ function Login({ setIsLoggedIn }: LoginProps) {
           {loading ? <div className="loader"></div> : "Login"}
         </button>
       </form>
-      {error && <FailedLogin message={error} onClose={closeModal} />}
+      {error && <ErrorPopup message={error} onClose={closeModal} />}
     </div>
   );
 }

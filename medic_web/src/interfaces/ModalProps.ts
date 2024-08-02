@@ -11,7 +11,7 @@ export interface ModalProps {
     setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   
   }
-  export interface IFailedLogin {
+  export interface IErrorPopup {
     message: string;
     onClose: () => void;
   }
