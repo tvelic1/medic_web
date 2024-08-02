@@ -139,3 +139,42 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+@media (max-width: 768px) {
+    .wrapper {
+        width: 90%;
+        padding: 20px 10px;
+    }
+
+    .wrapper h1 {
+        font-size: 22px;
+    }
+
+    .input-box input {
+        font-size: 14px;
+    }
+
+    .btn {
+        height: 40px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .wrapper {
+        width: 100%;
+        padding: 15px 5px;
+    }
+
+    .wrapper h1 {
+        font-size: 20px;
+    }
+
+    .input-box input {
+        font-size: 12px;
+    }
+
+    .btn {
+        height: 35px;
+        font-size: 12px;
+    }
+}

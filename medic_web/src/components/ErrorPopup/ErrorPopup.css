@@ -36,3 +36,44 @@
     font-size: 17px;
   }
   
+  @media (max-width: 768px) {
+    .flogin-overlay {
+        left: 10%;
+        width: 80%;
+    }
+
+    .flogin-content {
+        padding: 15px;
+        width: 90%;
+    }
+
+    .flogin-close-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .flogin-content p {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .flogin-overlay {
+        left: 5%;
+        width: 90%;
+    }
+
+    .flogin-content {
+        padding: 10px;
+        width: 100%;
+    }
+
+    .flogin-close-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .flogin-content p {
+        font-size: 13px;
+    }
+}

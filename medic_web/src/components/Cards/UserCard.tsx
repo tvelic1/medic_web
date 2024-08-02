@@ -63,7 +63,7 @@ import { makeRequest } from "../../axios/makeRequest";
           bottom: "3px",
           left: "5px",
           fontSize: "20px",
-          cursor:"auto",
+          cursor:"pointer",
           color: "black",
         }}
         onClick={(e) => {
