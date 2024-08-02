@@ -6,7 +6,7 @@ import {User} from "../../interfaces/User";
 import { handleDecrementOrdersUser, handleIncrementOrdersUser } from "../../helpers/handleOrders";
 import { validateImageUrl } from "../../helpers/checkImageURL";
 import { handleChange } from "../../helpers/handleChange";
-import axios from "axios";
+import { makeRequest } from "../../axios/makeRequest";
 
 
 
@@ -16,69 +16,81 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
   //neki od atributa usera su nebitni za update usera, jer se ne trebaju update, ali su tu zbog kompatibilnosti tipova
   
 
-const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
-
-    let imageUrl = await validateImageUrl(formValues.image_url);
   
-    try {
-      const response = await axios.put(
-        `https://medic-api-3vyj.vercel.app/users/details/${formValues.id}`,
-        {
-          username: formValues.username,
-          name: formValues.name,
-          orders: formValues.orders,
-          date_of_birth: formValues.date_of_birth,
-          image_url: imageUrl,
-        },
-        {withCredentials: true}
-      
-      );
+    let imageUrl = await validateImageUrl(formValues.image_url);
+    
+    const body: { [key: string]: any } = {};
 
-      const updatedUser = response.data;
+    if (user.username !== formValues.username) {
+      body.username = formValues.username;
+    }
+    if (user.name !== formValues.name) {
+      body.name = formValues.name;
+    }
+    if (user.orders !== formValues.orders) {
+      body.orders = formValues.orders;
+    }
+    if (user.date_of_birth !== formValues.date_of_birth) {
+      body.date_of_birth = formValues.date_of_birth;
+    }
+    if (user.image_url !== imageUrl) {
+      body.image_url = imageUrl;
+    }
+    //console.log(body);
+    try {
+      const updatedUser = await makeRequest({
+        method: 'PUT',
+        endpoint: `/users/details/${formValues.id}`,
+        data: body,
+      });
+  
       const ID = updatedUser.user.id;
       setUsers((prevUsers) =>
-        prevUsers.map((useri) => (useri.id === ID ? updatedUser.user : useri))
-      );   
-      
-      onClose(); 
-
-    } catch (error) {
-      alert("Failed to update user");
+        prevUsers.map((user) => (user.id === ID ? updatedUser.user : user))
+      );
+  
+      onClose();
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(`Failed to update user: ${err.message}`);
+      } else {
+        alert("Failed to update user");
+      }
     }
   };
+  
 
   const handleBlockUser = async (e: React.FormEvent) => {
-    e.preventDefault();
 
+    e.preventDefault();
   
     try {
-      const response = await axios.put(
-        `https://medic-api-3vyj.vercel.app/users/block/${formValues.id}`,
-        {
-          status: "blocked",
-        },
-        {withCredentials: true}
-      
-      );
-
-      const blockedUser = response.data;
+      const blockedUser = await makeRequest({
+        method: 'PUT',
+        endpoint: `/users/block/${formValues.id}`,
+        data: { status: "blocked" },
+      });
+  
       const ID = blockedUser.user.id;
       setUsers((prevUsers) =>
-        prevUsers.map((useri) =>
-          useri.id === ID ? { ...useri, status: "blocked" } : useri
-        ) )
-      
-      onClose(); 
-
-    } catch (error) {
-      alert("Failed to block user");
+        prevUsers.map((user) =>
+          user.id === ID ? { ...user, status: "blocked" } : user
+        )
+      );
+  
+      onClose();
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(`Failed to block user: ${err.message}`);
+      } else {
+        alert("Failed to block user");
+      }
     }
   };
-
   
-
-
   
 
   return (
