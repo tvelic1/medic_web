@@ -6,4 +6,7 @@ export interface UserCardProps {
     onMouseEnter: () => void;
     onMouseLeave: () => void;
     hoveredUserId: number | null;
+    className:string;
+    setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+
   }

@@ -27,6 +27,12 @@ body::before {
   left: 10px;
   position:absolute;
 }
+#addButton:hover{
+  background-color: rgb(73, 238, 114);
+}
+#logoutButton:hover{
+  background-color: rgb(153, 226, 226);
+}
 .container {
   margin-top: 50px;
   display: grid;

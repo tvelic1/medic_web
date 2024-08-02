@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { User } from "../../interfaces/User";
 import AddModal from "../Modal/AddModal";
 import { UserCard } from "../Cards/UserCard";
-import { BlockedUserCard } from "../Cards/BlockedUserCard";
 import { makeRequest } from "../../axios/makeRequest";
 import BlockedUserModal from "../Modal/BlockedUserModal";
 
@@ -105,6 +104,8 @@ function Home() {
             onMouseEnter={() => setHoveredUserId(user.id)}
             onMouseLeave={() => setHoveredUserId(null)}
             hoveredUserId={hoveredUserId}
+            className="card"
+            setUsers={setUsers}
           />
           )
           
@@ -112,13 +113,15 @@ function Home() {
           {users
           .filter((user) => user.status === "blocked")
           .map((user) => (
-            <BlockedUserCard
+            <UserCard
             key={user.id}
             user={user}
             onClick={() => handleUserClick(user)}
             onMouseEnter={() => setHoveredUserId(user.id)}
             onMouseLeave={() => setHoveredUserId(null)}
             hoveredUserId={hoveredUserId}
+            className="card card-blocked"
+            setUsers={setUsers}
           />
           ))}
 

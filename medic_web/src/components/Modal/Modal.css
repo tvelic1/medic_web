@@ -57,6 +57,10 @@
     font-size: 16px;
     color: #333;
   }
+
+  .modal-block:hover{
+    background: #ec5d5d;
+  }
   
   .modal-close:hover {
     background: #e67e7e;
