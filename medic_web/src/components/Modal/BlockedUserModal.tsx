@@ -38,7 +38,7 @@ const BlockedUserModal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h3>Are you sure that you want to unblock {user.name} ?</h3>
+        <p id='poruka'>Are you sure that you want to unblock <strong>{user.name}</strong> ?</p>
         
         <div className="modal-buttons">
           <button className="confirm-button" onClick={handleUnblockUser}>Yes</button>
