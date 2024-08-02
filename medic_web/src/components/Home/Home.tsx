@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Modal from "../Modal/Modal";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../interfaces/User";
 import AddModal from "../Modal/AddModal";
-import { formatDate } from "../../helpers/dateForDatabase";
+import { UserCard } from "../Cards/UserCard";
+import { BlockedUserCard } from "../Cards/BlockedUserCard";
+import { makeRequest } from "../../axios/makeRequest";
 
 function Home() {
   const [users, setUsers] = useState<User[]>([]);
@@ -19,36 +20,33 @@ function Home() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          "https://medic-api-3vyj.vercel.app/users",
-          { withCredentials: true }
-        );
-
-        setUsers(response.data);
+        const users = await makeRequest({
+          method: 'GET',
+          endpoint: '/users',
+        });
+  
+        setUsers(users);
       } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          setError(`HTTP error! Status: ${err.response.status}`);
+        if (err instanceof Error) {
+          setError(`${err.message}`);
         } else {
           setError("An error occurred");
         }
       }
     };
-
+  
     fetchUsers();
   }, []);
+  
 
   const handleUserClick = async (user: User) => {
     try {
-      const response = await axios.get(
-        `https://medic-api-3vyj.vercel.app/users/details/${user.id}`,
-        { withCredentials: true }
-      );
-
-      if (response.status === 200) {
-        setSelectedUser(response.data);
-      } else {
-        setError("User not found");
-      }
+      const userDetails = await makeRequest({
+        method: 'GET',
+        endpoint: `/users/details/${user.id}`,
+      });
+  
+      setSelectedUser(userDetails);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -57,6 +55,7 @@ function Home() {
       }
     }
   };
+  
 
   const handleCloseModal = () => {
     setSelectedUser(null);
@@ -65,23 +64,30 @@ function Home() {
 
   const handleLogout = async (): Promise<void> => {
     try {
-      await axios.post(
-        "https://medic-api-3vyj.vercel.app/logout",
-        {},
-        { withCredentials: true }
-      );
+      await makeRequest({
+        method: 'POST',
+        endpoint: '/logout',
+        data: {},
+      });
+  
       localStorage.removeItem("isLoggedIn");
       navigate("/");
+      
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Unexpected error occurred");
+      }
     }
   };
+
 
   return (
     <div>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <button id="addButton" onClick={() => setopenAddModal(true)}>
-        Add
+        + Add User
       </button>
       <button id="logoutButton" onClick={() => handleLogout()}>
         Logout
@@ -91,80 +97,28 @@ function Home() {
         {users
           .filter((user) => user.status === "active")
           .map((user) => (
-            <div
-              className="card"
-              key={user.id}
-              onClick={() => handleUserClick(user)}
-              onMouseEnter={() => setHoveredUserId(user.id)}
-              onMouseLeave={() => setHoveredUserId(null)}
-            >
-              <div style={{ marginTop: "-20px", marginBottom: "15px" }}>
-                <strong>{user.name}</strong>
-              </div>
-              <img src={user.image_url} />
-              <div className="user-info">
-                <strong>Username:</strong> {user.username}
-                <br />
-                <strong>Birthday:</strong>{" "}
-                {formatDate(user.date_of_birth)
-                  .split("-")
-                  .reverse()
-                  .join(".") ?? "Unknown"}
-              </div>
-              <div className="role-info">
-                <strong>ID:</strong> {user.id}
-                <br />
-                <strong>Orders:</strong> {user.orders}
-              </div>
-              {hoveredUserId === user.id && (
-                <p id="hover-info">
-                  Last login date:{" "}
-                  {formatDate(user.last_login).split("-").reverse().join(".") ??
-                    "Never"}
-                </p>
-              )}
-
-              
-            </div>
-          ))}
+            <UserCard
+            key={user.id}
+            user={user}
+            onClick={() => handleUserClick(user)}
+            onMouseEnter={() => setHoveredUserId(user.id)}
+            onMouseLeave={() => setHoveredUserId(null)}
+            hoveredUserId={hoveredUserId}
+          />
+          )
+          
+          )}
           {users
           .filter((user) => user.status === "blocked")
           .map((user) => (
-            <div
-              className="card card-blocked"
-              key={user.id}
-              onClick={() => handleUserClick(user)}
-              onMouseEnter={() => setHoveredUserId(user.id)}
-              onMouseLeave={() => setHoveredUserId(null)}
-            >
-              <div style={{ marginTop: "-20px", marginBottom: "15px" }}>
-                <strong>{user.name}</strong>
-              </div>
-              <img src={user.image_url} />
-              <div className="user-info">
-                <strong>Username:</strong> {user.username}
-                <br />
-                <strong>Birthday:</strong>{" "}
-                {formatDate(user.date_of_birth)
-                  .split("-")
-                  .reverse()
-                  .join(".") ?? "Unknown"}
-              </div>
-              <div className="role-info">
-                <strong>ID:</strong> {user.id}
-                <br />
-                <strong>Orders:</strong> {user.orders}
-              </div>
-              {hoveredUserId === user.id && (
-                <p id="hover-info">
-                  Last login date:{" "}
-                  {formatDate(user.last_login).split("-").reverse().join(".") ??
-                    "Never"}
-                </p>
-              )}
-
-              
-            </div>
+            <BlockedUserCard
+            key={user.id}
+            user={user}
+            onClick={() => handleUserClick(user)}
+            onMouseEnter={() => setHoveredUserId(user.id)}
+            onMouseLeave={() => setHoveredUserId(null)}
+            hoveredUserId={hoveredUserId}
+          />
           ))}
 
 

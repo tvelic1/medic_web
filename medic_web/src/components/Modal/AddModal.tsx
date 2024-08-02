@@ -8,9 +8,11 @@ import {
 import { validateImageUrl } from "../../helpers/checkImageURL";
 import { User } from "../../interfaces/User";
 import { handleChange } from "../../helpers/handleChange";
-import axios from "axios";
+import FailedLogin from "../FailedLogin/FailedLogin";
+import { makeRequest } from "../../axios/makeRequest";
 
 const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
+
   const [formValues, setFormValues] = useState<User>({
     id: 0,
     username: "",
@@ -23,34 +25,43 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
     last_login: "", //neki od ovih atributa su nebitni za dodavanje usera, jer se imaju default vrijednost u bazi, ali su tu zbog kompatibilnosti tipova
   });
 
+  const [error, setError]=useState<string|null>(null);
+
+
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
-
     let imageUrl = await validateImageUrl(formValues.image_url);
-
+  
     try {
-        const response = await axios.post(
-            `https://medic-api-3vyj.vercel.app/register`,
-            {
-                username: formValues.username,
-                password: formValues.password,
-                name: formValues.name,
-                orders: formValues.orders,
-                date_of_birth: formValues.date_of_birth,
-                image_url: imageUrl,
-            },
-            
-                {withCredentials: true}
-        );
+      const addedUser = await makeRequest({
+        method: 'POST',
+        endpoint: '/register',
+        data: {
+          username: formValues.username,
+          password: formValues.password,
+          name: formValues.name,
+          orders: formValues.orders,
+          date_of_birth: formValues.date_of_birth,
+          image_url: imageUrl,
+        },
+      });
+  
+      setUsers((prevUsers) => [...prevUsers, addedUser.user]);
+      onClose();
+      setError(null);
 
-        const addedUser = response.data;
-        setUsers((prevUsers) => [...prevUsers, addedUser.user]);
-        alert("User added successfully");
-        onClose();
-    } catch (error) {
-        alert("Failed to add user");
+    } catch (err) {
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to add user");
+      }
     }
-};
+
+  };
+  
 
   return (
     <div className="modal">
@@ -151,7 +162,8 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
             Add
           </button>
         </form>
-      </div>
+        {error && <FailedLogin message={error} onClose={()=> setError(null)} />}
+        </div>
     </div>
   );
 };

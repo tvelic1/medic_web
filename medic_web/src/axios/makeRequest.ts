@@ -27,7 +27,7 @@ export const makeRequest = async ({ method, endpoint, data, headers }: RequestOp
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios error:', error.response);
-      throw new Error(error.response?.data?.message || 'Failed to make request');
+      throw new Error(error.response?.data || 'Failed to make request');
     } else {
       console.error('Unexpected error:', error);
       throw new Error('Unexpected error occurred');
