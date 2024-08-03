@@ -32,17 +32,22 @@ function Login({ setIsLoggedIn }: LoginProps) {
     e.preventDefault();
     setLoading(true);
   
-    try {
+    try {const token=localStorage.getItem('jwtToken')
       const response = await makeRequest({
         method: 'POST',
         endpoint: '/login',
         data: { username, password },
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
   
       if (response) {
         localStorage.setItem("isLoggedIn", "prijavljen");
         setIsLoggedIn(true);
         navigate("/home");
+        localStorage.setItem('jwtToken', response.token);
+        //console.log(response.token)
       }
     } catch (error) {
       localStorage.removeItem("isLoggedIn");

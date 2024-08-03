@@ -14,11 +14,16 @@ export const UserCard: React.FC<UserCardProps> = ({
   setUsers,
 }) => {
   const handleDeleteUser = async (userId: number) => {
-    try {
-      await makeRequest({
+    try { const token=localStorage.getItem('jwtToken');
+      const data=await makeRequest({
         method: "DELETE",
         endpoint: `/users/${userId}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+      localStorage.setItem('jwtToken',data.token);
+
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
     } catch (error) {
       console.error("Error deleting user:", error);

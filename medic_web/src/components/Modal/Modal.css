@@ -131,6 +131,7 @@
     margin: 1px 5px;
     cursor: pointer;
     transform: translateY(-6.5px);
+    color:black;
   }
   .orders-input-wrapper button:hover{
     background: #67e2c6;

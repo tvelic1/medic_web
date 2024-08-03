@@ -18,14 +18,21 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+
     const fetchUsers = async () => {
       try {
         const users = await makeRequest({
-          method: 'GET',
-          endpoint: '/users',
+          method: "GET",
+          endpoint: "/users",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
-  
-        setUsers(users);
+
+        setUsers(users.data);
+        //console.log(users.token);
+        localStorage.setItem("jwtToken", users.token);
       } catch (err) {
         if (err instanceof Error) {
           setError(`${err.message}`);
@@ -34,19 +41,25 @@ function Home() {
         }
       }
     };
-  
+
     fetchUsers();
   }, []);
-  
 
   const handleUserClick = async (user: User) => {
     try {
+      const token = localStorage.getItem("jwtToken");
+
       const userDetails = await makeRequest({
-        method: 'GET',
+        method: "GET",
         endpoint: `/users/details/${user.id}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-  
-      setSelectedUser(userDetails);
+      localStorage.setItem("jwtToken", userDetails.token);
+      console.log(userDetails.token);
+
+      setSelectedUser(userDetails.data);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -55,7 +68,6 @@ function Home() {
       }
     }
   };
-  
 
   const handleCloseModal = () => {
     setSelectedUser(null);
@@ -65,14 +77,14 @@ function Home() {
   const handleLogout = async (): Promise<void> => {
     try {
       await makeRequest({
-        method: 'POST',
-        endpoint: '/logout',
+        method: "POST",
+        endpoint: "/logout",
         data: {},
       });
-  
+
       localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("jwtToken");
       navigate("/");
-      
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -81,7 +93,6 @@ function Home() {
       }
     }
   };
-
 
   return (
     <div>
@@ -98,37 +109,32 @@ function Home() {
           .filter((user) => user.status === "active")
           .map((user) => (
             <UserCard
-            key={user.id}
-            user={user}
-            onClick={() => handleUserClick(user)}
-            onMouseEnter={() => setHoveredUserId(user.id)}
-            onMouseLeave={() => setHoveredUserId(null)}
-            hoveredUserId={hoveredUserId}
-            className="card"
-            setUsers={setUsers}
-          />
-          )
-          
-          )}
-          {users
+              key={user.id}
+              user={user}
+              onClick={() => handleUserClick(user)}
+              onMouseEnter={() => setHoveredUserId(user.id)}
+              onMouseLeave={() => setHoveredUserId(null)}
+              hoveredUserId={hoveredUserId}
+              className="card"
+              setUsers={setUsers}
+            />
+          ))}
+        {users
           .filter((user) => user.status === "blocked")
           .map((user) => (
             <UserCard
-            key={user.id}
-            user={user}
-            onClick={() => handleUserClick(user)}
-            onMouseEnter={() => setHoveredUserId(user.id)}
-            onMouseLeave={() => setHoveredUserId(null)}
-            hoveredUserId={hoveredUserId}
-            className="card card-blocked"
-            setUsers={setUsers}
-          />
+              key={user.id}
+              user={user}
+              onClick={() => handleUserClick(user)}
+              onMouseEnter={() => setHoveredUserId(user.id)}
+              onMouseLeave={() => setHoveredUserId(null)}
+              hoveredUserId={hoveredUserId}
+              className="card card-blocked"
+              setUsers={setUsers}
+            />
           ))}
-
-
-
       </div>
-      {selectedUser?.status==='active'  && (
+      {selectedUser?.status === "active" && (
         <Modal
           onClose={handleCloseModal}
           user={selectedUser}
@@ -136,14 +142,14 @@ function Home() {
         />
       )}
 
-      {selectedUser?.status==='blocked'  && (
+      {selectedUser?.status === "blocked" && (
         <BlockedUserModal
           onClose={handleCloseModal}
           user={selectedUser}
           setUsers={setUsers}
         />
       )}
-     
+
       {openAddModal && (
         <AddModal onClose={handleCloseModal} setUsers={setUsers} />
       )}
