@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./Modal.css";
 import { ModalAddProps } from "../../interfaces/ModalProps";
 import {
   handleDecrementOrdersUser,
