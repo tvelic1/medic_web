@@ -49,12 +49,13 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
           image_url: imageUrl,
         },
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `${token}`,
         },
       });
   
-      setUsers((prevUsers) => [...prevUsers, addedUser.user]);
-      localStorage.setItem('jwtToken', addedUser.token);
+      setUsers((prevUsers) => [...prevUsers, addedUser.data.user]);
+      console.log(addedUser.headers.Authorization)
+      localStorage.setItem('jwtToken', addedUser.headers.authorization);
 
       onClose();
       setError(null);

@@ -19,10 +19,10 @@ export const UserCard: React.FC<UserCardProps> = ({
         method: "DELETE",
         endpoint: `/users/${userId}`,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
       });
-      localStorage.setItem('jwtToken',data.token);
+      localStorage.setItem('jwtToken',data.headers.authorization);
 
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
     } catch (error) {

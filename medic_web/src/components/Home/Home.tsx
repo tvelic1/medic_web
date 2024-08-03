@@ -26,13 +26,13 @@ function Home() {
           method: "GET",
           endpoint: "/users",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `${token}`,
           },
         });
 
-        setUsers(users.data);
+        setUsers(users.data.data);
         //console.log(users.token);
-        localStorage.setItem("jwtToken", users.token);
+        localStorage.setItem("jwtToken", users.headers.authorization);
       } catch (err) {
         if (err instanceof Error) {
           setError(`${err.message}`);
@@ -53,13 +53,13 @@ function Home() {
         method: "GET",
         endpoint: `/users/details/${user.id}`,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
       });
-      localStorage.setItem("jwtToken", userDetails.token);
-      console.log(userDetails.token);
+      localStorage.setItem("jwtToken", userDetails.headers.authorization);
+      //console.log(userDetails.token);
 
-      setSelectedUser(userDetails.data);
+      setSelectedUser(userDetails.data.data);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

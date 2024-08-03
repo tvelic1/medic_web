@@ -19,12 +19,12 @@ const BlockedUserModal: React.FC<ModalProps> = ({
         endpoint: `/users/block/${user.id}`,
         data: { status: "active" },
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
       });
 
-      const ID = unblockedUser.user.id;
-      localStorage.setItem('jwtToken',unblockedUser.token);
+      const ID = unblockedUser.data.user.id;
+      localStorage.setItem('jwtToken',unblockedUser.headers.authorization);
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id === ID ? { ...user, status: "active" } : user

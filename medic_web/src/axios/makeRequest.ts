@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, Method } from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL,
+  baseURL: "https://medic-api-3vyj.vercel.app/",
   withCredentials: true, 
   
 });
@@ -23,7 +23,7 @@ export const makeRequest = async ({ method, endpoint, data, headers }: RequestOp
     };
 
     const response = await axiosInstance(config);
-    return response.data;
+    return response;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios error:', error.response);

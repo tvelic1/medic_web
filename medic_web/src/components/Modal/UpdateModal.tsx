@@ -50,15 +50,15 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
         endpoint: `/users/details/${formValues.id}`,
         data: body,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
       });
 
-      const ID = updatedUser.user.id;
+      const ID = updatedUser.data.user.id;
       setUsers((prevUsers) =>
-        prevUsers.map((user) => (user.id === ID ? updatedUser.user : user))
+        prevUsers.map((user) => (user.id === ID ? updatedUser.data.user : user))
       );
-      localStorage.setItem("jwtToken", updatedUser.token);
+      localStorage.setItem("jwtToken", updatedUser.headers.authorization);
 
       onClose();
     } catch (err) {
@@ -83,12 +83,12 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
         endpoint: `/users/block/${formValues.id}`,
         data: { status: "blocked" },
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
       });
 
-      const ID = blockedUser.user.id;
-      localStorage.setItem("jwtToken", blockedUser.token);
+      const ID = blockedUser.data.user.id;
+      localStorage.setItem("jwtToken", blockedUser.headers.authorization);
 
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
