@@ -16,12 +16,13 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
   const [formValues, setFormValues] = useState<User>({...user,date_of_birth: formatDate(user.date_of_birth)})
   //neki od atributa usera su nebitni za update usera, jer se ne trebaju update, ali su tu zbog kompatibilnosti tipova
   const [error, setError]=useState<string|null>(null);
+  const [loading, setLoading] = useState(false);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
 
     e.preventDefault();
-  
+    setLoading(true);
     let imageUrl = await validateImageUrl(formValues.image_url);
     
     const body: { [key: string]: any } = {};
@@ -60,6 +61,8 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
       } else {
         setError("Failed to update user");
       }
+    } finally{
+      setLoading(false);
     }
   };
   
@@ -104,15 +107,35 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
           Block
         </button>
         <h2>User Details</h2>
-        <form id="modalForm" onSubmit={handleSubmit}>
+        <img src={formValues.image_url} style={{ width: '150px', borderRadius: '40%', height:'150px' }} />        <form id="modalForm" onSubmit={handleSubmit}>
           <label className="labele" htmlFor="id">
             ID:{" "}
           </label>
           <input
-            className="modalinput"
+            className="modalinput readonly"
             name="id"
             type="text"
             value={formValues.id.toString()}
+            readOnly
+          />
+          <label className="labele" htmlFor="status">
+            Status:{" "}
+          </label>
+          <input
+            className="modalinput readonly"
+            name="status"
+            type="text"
+            value={formValues.status}
+            readOnly
+          />
+          <label className="labele" htmlFor="last_login">
+            Last login date:{" "}
+          </label>
+          <input
+            className="modalinput readonly"
+            name="last_login"
+            type="text"
+            value={formatDate(formValues.last_login).split('-').reverse().join('.') ?? "Never"}
             readOnly
           />
           <label className="labele" htmlFor="username">
@@ -180,8 +203,8 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
             onChange={(e)=>handleChange(e,setFormValues)}
             required
           />
-          <button type="submit" className="submit-btn">
-            Update
+          <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? <div className="loader"></div> : "Update"}
           </button>
         </form>
         {error && <ErrorPopup message={error} onClose={()=> setError(null)} />}

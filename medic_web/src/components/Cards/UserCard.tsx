@@ -4,7 +4,7 @@ import { UserCardProps } from "../../interfaces/UserCard";
 import { FaTrash } from "react-icons/fa";
 import { makeRequest } from "../../axios/makeRequest";
 
- export const UserCard: React.FC<UserCardProps> = ({
+export const UserCard: React.FC<UserCardProps> = ({
   user,
   onClick,
   onMouseEnter,
@@ -13,11 +13,10 @@ import { makeRequest } from "../../axios/makeRequest";
   className,
   setUsers,
 }) => {
-
   const handleDeleteUser = async (userId: number) => {
     try {
       await makeRequest({
-        method: 'DELETE',
+        method: "DELETE",
         endpoint: `/users/${userId}`,
       });
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
@@ -33,7 +32,8 @@ import { makeRequest } from "../../axios/makeRequest";
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div style={{ marginTop: "-20px", marginBottom: "15px", fontSize:"20px"  }}>
+      <div className="naslov"
+      >
         <strong>{user.name}</strong>
       </div>
       <img src={user.image_url} alt={`${user.name}`} />
@@ -41,10 +41,8 @@ import { makeRequest } from "../../axios/makeRequest";
         <strong>Username:</strong> {user.username}
         <br />
         <strong>Birthday:</strong>{" "}
-        {formatDate(user.date_of_birth)
-          .split("-")
-          .reverse()
-          .join(".") ?? "Unknown"}
+        {formatDate(user.date_of_birth).split("-").reverse().join(".") ??
+          "Unknown"}
       </div>
       <div className="role-info">
         <strong>ID:</strong> {user.id}
@@ -54,18 +52,12 @@ import { makeRequest } from "../../axios/makeRequest";
       {hoveredUserId === user.id && (
         <p id="hover-info">
           Last login date:{" "}
-          {formatDate(user.last_login).split("-").reverse().join(".") ?? "Never"}
+          {formatDate(user.last_login).split("-").reverse().join(".") ??
+            "Never"}
         </p>
       )}
-       <FaTrash
-        style={{
-          position: "absolute",
-          bottom: "3px",
-          left: "5px",
-          fontSize: "20px",
-          cursor:"pointer",
-          color: "black",
-        }}
+      <FaTrash
+        className="trash-icon"
         onClick={(e) => {
           e.stopPropagation();
           handleDeleteUser(user.id);
@@ -74,4 +66,3 @@ import { makeRequest } from "../../axios/makeRequest";
     </div>
   );
 };
-

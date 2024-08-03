@@ -12,6 +12,7 @@ import { makeRequest } from "../../axios/makeRequest";
 import ErrorPopup from "../ErrorPopup/ErrorPopup";
 
 const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
+  const [loading, setLoading] = useState(false);
 
   const [formValues, setFormValues] = useState<User>({
     id: 0,
@@ -33,7 +34,7 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
 
     e.preventDefault();
     let imageUrl = await validateImageUrl(formValues.image_url);
-  
+     setLoading(true);
     try {
       const addedUser = await makeRequest({
         method: 'POST',
@@ -59,6 +60,8 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
       } else {
         setError("Failed to add user");
       }
+    }finally{
+      setLoading(false);
     }
 
   };
@@ -159,8 +162,8 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
             placeholder="image_url"
             required
           />
-          <button type="submit" className="submit-btn">
-            Add
+          <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? <div className="loader"></div> : "Add"}
           </button>
         </form>
         {error && <ErrorPopup message={error} onClose={()=> setError(null)} />}
