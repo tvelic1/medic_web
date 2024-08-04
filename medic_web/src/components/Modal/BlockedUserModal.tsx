@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import "./BlockedModal.css";
 import { ModalProps } from "../../interfaces/ModalProps";
 import { makeRequest } from "../../axios/makeRequest";
+import ErrorPopup from "../ErrorPopup/ErrorPopup";
 
 const BlockedUserModal: React.FC<ModalProps> = ({
   onClose,
   user,
   setUsers,
 }) => {
+  const [error, setError] = useState<string | null>(null);
+
   const handleUnblockUser = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -37,9 +40,9 @@ const BlockedUserModal: React.FC<ModalProps> = ({
       onClose();
     } catch (err) {
       if (err instanceof Error) {
-        alert(`Failed to unblock user: ${err.message}`);
+        setError(`${err.message}`);
       } else {
-        alert("Failed to unblock user");
+        setError("Failed to unblock user");
       }
     }
   };
@@ -58,6 +61,8 @@ const BlockedUserModal: React.FC<ModalProps> = ({
             No
           </button>
         </div>
+        {error && <ErrorPopup message={error} onClose={() => setError(null)} />}
+
       </div>
     </div>
   );

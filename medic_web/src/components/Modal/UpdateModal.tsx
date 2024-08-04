@@ -105,9 +105,9 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
       onClose();
     } catch (err) {
       if (err instanceof Error) {
-        alert(`Failed to block user: ${err.message}`);
+        setError(`${err.message}`);
       } else {
-        alert("Failed to block user");
+        setError("Failed to block user");
       }
     }
   };
