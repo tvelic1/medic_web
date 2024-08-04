@@ -14,7 +14,8 @@ export const UserCard: React.FC<UserCardProps> = ({
   setUsers,
 }) => {
   const handleDeleteUser = async (userId: number) => {
-    try { const token=localStorage.getItem('jwtToken');
+    try { 
+      const token=localStorage.getItem('jwtToken');
       const data=await makeRequest({
         method: "DELETE",
         endpoint: `/users/${userId}`,
@@ -22,6 +23,7 @@ export const UserCard: React.FC<UserCardProps> = ({
           Authorization: `${token}`,
         },
       });
+      if(data.headers.authorization)
       localStorage.setItem('jwtToken',data.headers.authorization);
 
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));

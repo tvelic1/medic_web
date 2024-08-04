@@ -24,7 +24,10 @@ const BlockedUserModal: React.FC<ModalProps> = ({
       });
 
       const ID = unblockedUser.data.user.id;
+      
+      if(unblockedUser.headers.authorization)
       localStorage.setItem('jwtToken',unblockedUser.headers.authorization);
+
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id === ID ? { ...user, status: "active" } : user

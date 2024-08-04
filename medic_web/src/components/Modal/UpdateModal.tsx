@@ -22,8 +22,9 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    const token = localStorage.getItem("jwtToken");
+
     e.preventDefault();
+    const token = localStorage.getItem("jwtToken");
     setLoading(true);
     const imageUrl = await validateImageUrl(formValues.image_url);
 
@@ -55,11 +56,14 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
       });
 
       const ID = updatedUser.data.user.id;
+      
+      if(updatedUser.headers.authorization)
+      localStorage.setItem("jwtToken", updatedUser.headers.authorization);
+
       setUsers((prevUsers) =>
         prevUsers.map((user) => (user.id === ID ? updatedUser.data.user : user))
       );
-      localStorage.setItem("jwtToken", updatedUser.headers.authorization);
-
+      
       onClose();
     } catch (err) {
       if (err instanceof Error) {
@@ -88,6 +92,8 @@ const Modal: React.FC<ModalProps> = ({ onClose, user, setUsers }) => {
       });
 
       const ID = blockedUser.data.user.id;
+
+      if(blockedUser.headers.authorization)
       localStorage.setItem("jwtToken", blockedUser.headers.authorization);
 
       setUsers((prevUsers) =>

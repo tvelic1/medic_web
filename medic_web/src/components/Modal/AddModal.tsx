@@ -31,9 +31,10 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
 
 
   const handleSubmit = async (e: React.FormEvent) => {
-    const token=localStorage.getItem('jwtToken')
 
     e.preventDefault();
+    const token=localStorage.getItem('jwtToken')
+
     let imageUrl = await validateImageUrl(formValues.image_url);
      setLoading(true);
     try {
@@ -53,10 +54,10 @@ const AddModal: React.FC<ModalAddProps> = ({ onClose, setUsers }) => {
         },
       });
   
-      setUsers((prevUsers) => [...prevUsers, addedUser.data.user]);
-      console.log(addedUser.headers.Authorization)
+      if(addedUser.headers.authorization)
       localStorage.setItem('jwtToken', addedUser.headers.authorization);
 
+      setUsers((prevUsers) => [...prevUsers, addedUser.data.user]);
       onClose();
       setError(null);
 

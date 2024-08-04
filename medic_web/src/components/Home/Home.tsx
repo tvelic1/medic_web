@@ -18,6 +18,7 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     const token = localStorage.getItem("jwtToken");
 
     const fetchUsers = async () => {
@@ -30,9 +31,11 @@ function Home() {
           },
         });
 
-        setUsers(users.data.data);
-        //console.log(users.token);
+        if(users.headers.authorization)
         localStorage.setItem("jwtToken", users.headers.authorization);
+
+        setUsers(users.data.data);
+
       } catch (err) {
         if (err instanceof Error) {
           setError(`${err.message}`);
@@ -56,10 +59,11 @@ function Home() {
           Authorization: `${token}`,
         },
       });
-      localStorage.setItem("jwtToken", userDetails.headers.authorization);
-      //console.log(userDetails.token);
 
+      if(userDetails.headers.authorization)
+      localStorage.setItem("jwtToken", userDetails.headers.authorization);
       setSelectedUser(userDetails.data.data);
+
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -85,6 +89,7 @@ function Home() {
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("jwtToken");
       navigate("/");
+
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
